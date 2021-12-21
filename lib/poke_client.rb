@@ -15,7 +15,6 @@ module PokeClient
   #   return Net::HTTP.get(uri)
   # end
 
-  
   def self.all
     PokeClient::Client.new.all("pokemon")
   end
@@ -49,6 +48,3 @@ module PokeClient
   end
 end
 
-e = PokeClient
-puts e
-#binding.irb
