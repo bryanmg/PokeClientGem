@@ -1,16 +1,33 @@
 # frozen_string_literal: true
 
+require_relative "../test_helper"
+
 module PokeClient
   class ClientTest < Minitest::Test
     def test_client_class_must_exist
-      refute_nil PokeClientAPI.new
+      refute_nil PokeClient::Client.new
     end
 
     def test_it_has_base_path_initialized
-      refute_nil PokeClientAPI.new.base_path
+      assert_raises NoMethodError do
+        PokeClient::Client.new.base_path
+      end
     end
 
-    # def test_client_must_get_all_pokemons
-    # end
+    def test_client_must_get_all_pokemons
+      VCR.use_cassette("all_pokemons") do
+        pokemons = PokeClient::Client.new.all("pokemon/")
+        assert_instance_of Array, pokemons
+        assert_instance_of Hash, pokemons.first
+      end
+    end
+
+    def test_client_must_get_type_pokemon
+      VCR.use_cassette("get_type") do
+        pokemons = PokeClient::Client.new.get_type("1")
+        assert_instance_of Array, pokemons
+        assert_instance_of Hash, pokemons.first
+      end
+    end
   end
 end

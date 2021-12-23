@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-# require "test_helper"
-$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
-require "poke_client"
-require "minitest/autorun"
-# require "vcr"
+require_relative "test_helper"
 
 class PokeClientTest < Minitest::Test
   def test_taht_it_has_version_number
@@ -12,50 +8,66 @@ class PokeClientTest < Minitest::Test
   end
 
   def test_fetc_all_pokemons
-    pokemons = PokeClient.all
-    assert_instance_of Array, pokemons
-    assert_instance_of Hash, pokemons.first
+    VCR.use_cassette("all_pokemons") do
+      pokemons = PokeClient.all
+      assert_instance_of Array, pokemons
+      assert_instance_of Hash, pokemons.first
+    end
   end
 
   def test_fetch_all_normal_pokemons
-    pokemons = PokeClient.normal
-    assert_instance_of Array, pokemons
-    assert_instance_of Hash, pokemons.first
+    VCR.use_cassette("normal") do
+      pokemons = PokeClient.normal
+      assert_instance_of Array, pokemons
+      assert_instance_of Hash, pokemons.first
+    end
   end
 
   def test_fetch_all_rock_pokemons
-    pokemons = PokeClient.rock
-    assert_instance_of Array, pokemons
-    assert_instance_of Hash, pokemons.first
+    VCR.use_cassette("rock") do
+      pokemons = PokeClient.rock
+      assert_instance_of Array, pokemons
+      assert_instance_of Hash, pokemons.first
+    end
   end
 
   def test_fetch_all_fighting_pokemons
-    pokemons = PokeClient.fighting
-    assert_instance_of Array, pokemons
-    assert_instance_of Hash, pokemons.first
+    VCR.use_cassette("fighting") do
+      pokemons = PokeClient.fighting
+      assert_instance_of Array, pokemons
+      assert_instance_of Hash, pokemons.first
+    end
   end
 
   def test_fetch_all_flying_pokemons
-    pokemons = PokeClient.flying
-    assert_instance_of Array, pokemons
-    assert_instance_of Hash, pokemons.first
+    VCR.use_cassette("flying") do
+      pokemons = PokeClient.flying
+      assert_instance_of Array, pokemons
+      assert_instance_of Hash, pokemons.first
+    end
   end
 
   def test_fetch_all_ground_pokemons
-    pokemons = PokeClient.ground
-    assert_instance_of Array, pokemons
-    assert_instance_of Hash, pokemons.first
+    VCR.use_cassette("ground") do
+      pokemons = PokeClient.ground
+      assert_instance_of Array, pokemons
+      assert_instance_of Hash, pokemons.first
+    end
   end
 
   def test_fetch_all_fire_pokemons
-    pokemons = PokeClient.fire
-    assert_instance_of Array, pokemons
-    assert_instance_of Hash, pokemons.first
+    VCR.use_cassette("fire") do
+      pokemons = PokeClient.fire
+      assert_instance_of Array, pokemons
+      assert_instance_of Hash, pokemons.first
+    end
   end
 
   def test_fetch_all_water_pokemons
-    pokemons = PokeClient.water
-    assert_instance_of Array, pokemons
-    assert_instance_of Hash, pokemons.first
+    VCR.use_cassette("water") do
+      pokemons = PokeClient.water
+      assert_instance_of Array, pokemons
+      assert_instance_of Hash, pokemons.first
+    end
   end
 end
