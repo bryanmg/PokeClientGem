@@ -1,8 +1,7 @@
 # PokeClient
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/poke_client`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+PokeClientAPI is a simple wrapper to manage pokemons using his types with the pokeApi as source. The estandar response consis in an array of hashes with the pokemon id and type each has, example: `[{:id=>"1", :name=>"bulbasaur"}]` <br/>
+See entire documentation in: https://pokeapi.co/
 
 ## Installation
 
@@ -22,8 +21,17 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+How to use this gem.
+* Import this gem in your proyect.
+* Afther that you can use all the automatic funcionalitty
 
+```ruby
+PokeClient.all
+PokeClient.rock # or some pokemon type
+```
+
+Current available types suported:
+[`normal, fighting, flying, ground, rock, fire, water`]
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -32,4 +40,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/poke_client.
+Bug reports and pull requests are welcome on GitHub at https://github.com/bryanmg/poke_client.
