@@ -25,7 +25,7 @@ module PokeClient
 
     def get_type(type_id)
       req = Net::HTTP.get uri_path("type/#{type_id}")
-      create_response_type parse_json(req)
+      append_response_of_type parse_json(req)
       response
     end
 
@@ -40,17 +40,15 @@ module PokeClient
       request["count"].to_i
     end
 
-    def create_response_type(body)
+    def append_response_of_type(body)
       body["pokemon"]&.each do |x|
-        response << {
-          id: x["pokemon"]["url"].split("/")[-1], name: x["pokemon"]["name"]
-        }
+        response << row_of_response(x["pokemon"])
       end
     end
 
     def append_response(body)
       body["results"]&.each do |x|
-        response << { id: x["url"].split("/")[-1], name: x["name"] }
+        response << row_of_response(x)
       end
     end
 
@@ -64,6 +62,10 @@ module PokeClient
       uri = URI.join(base_path, path)
       uri.query = URI.encode_www_form args.fetch(:query, {}).compact
       uri
+    end
+
+    def row_of_response(field)
+      { id: field["url"].split("/")[-1], name: field["name"] }
     end
   end
 end
