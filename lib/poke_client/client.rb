@@ -8,48 +8,61 @@ module PokeClient
   class Error < StandardError; end
 
   class Client
+    BASE_PATH = "https://pokeapi.co/api/v2/"
+    PER_PAGE = 50
+
     def initialize
-      @base_path = "https://pokeapi.co/api/v2/"
-      @per_page = 50
-      @response = []
+      @pokemons = []
     end
 
-    def all(path)
-      all_pokemons = do_paginated_request path
-      total_pages = all_pokemons / per_page
+    def all_pokemons
+      path = "pokemon/"
+      api_response = request_pokemons(path)
+      total_number_of_pokemon = api_response["count"]
+      total_pages = total_number_of_pokemon / PER_PAGE
+      pokemons.concat sanitize_api_response(api_response)
       Async.new.map(1..total_pages) do |page|
-        do_paginated_request(path, page * per_page)
+        offset = page * PER_PAGE
+        api_response = request_pokemons(path, offset)
+        pokemons.concat sanitize_api_response(api_response)
       end
-      response
+      pokemons
     end
 
-    def get_type(type_id)
-      req = Net::HTTP.get uri_path("type/#{type_id}")
-      append_response_of_type parse_json(req)
-      response
+    def pokemons_by_type(type_id)
+      uri = create_uri("type/#{type_id}")
+      req = Net::HTTP.get(uri)
+      api_response = parse_json(req)
+      append_response_of_types(api_response)
+      pokemons
     end
 
     private
 
-    attr_reader :base_path, :per_page, :response
+    attr_reader :pokemons
 
-    def do_paginated_request(path, page = 0)
-      uri = uri_path(path, query: { offset: page, limit: per_page })
-      request = parse_json(Net::HTTP.get(uri))
-      append_response request
-      request["count"].to_i
+    def request_pokemons(path, offset = 0)
+      uri = create_uri(path, query: { offset: offset, limit: PER_PAGE })
+      request = Net::HTTP.get(uri)
+      parse_json(request)
     end
 
-    def append_response_of_type(body)
-      body["pokemon"]&.each do |x|
-        response << row_of_response(x["pokemon"])
+    def append_response_of_types(body)
+      # To get aech pokemon data it's necesary to dig in body like:
+      # body.pokemon.pokemon ==> {pokemon-data}
+      body["pokemon"].each do |row|
+        pokemons << build_pokemon_data(row["pokemon"])
       end
     end
 
-    def append_response(body)
-      body["results"]&.each do |x|
-        response << row_of_response(x)
+    def sanitize_api_response(body)
+      # To get aech pokemon data it's necesary to dig in body like:
+      # body.results ==> {pokemon-data}
+      example = []
+      body["results"].each do |row|
+        example << build_pokemon_data(row)
       end
+      example
     end
 
     def parse_json(request)
@@ -58,14 +71,17 @@ module PokeClient
       nil
     end
 
-    def uri_path(path, **args)
-      uri = URI.join(base_path, path)
+    def create_uri(path, **args)
+      uri = URI.join(BASE_PATH, path)
       uri.query = URI.encode_www_form args.fetch(:query, {}).compact
       uri
     end
 
-    def row_of_response(field)
-      { id: field["url"].split("/")[-1], name: field["name"] }
+    def build_pokemon_data(pokemon_row)
+      # The last number in the url it's equal to pokemon's id
+      # https://pokeapi.co/api/v2/pokemon/1/
+      pokemon_id = pokemon_row["url"].split("/").last
+      { id: pokemon_id, name: pokemon_row["name"] }
     end
   end
 end

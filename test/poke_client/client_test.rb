@@ -16,7 +16,7 @@ module PokeClient
 
     def test_client_must_get_all_pokemons
       VCR.use_cassette("all_pokemons") do
-        pokemons = PokeClient::Client.new.all("pokemon/")
+        pokemons = PokeClient::Client.new.all_pokemons
         assert_instance_of Array, pokemons
         assert_instance_of Hash, pokemons.first
       end
@@ -24,7 +24,7 @@ module PokeClient
 
     def test_client_must_get_type_pokemon
       VCR.use_cassette("get_type") do
-        pokemons = PokeClient::Client.new.get_type("1")
+        pokemons = PokeClient::Client.new.pokemons_by_type("1")
         assert_instance_of Array, pokemons
         assert_instance_of Hash, pokemons.first
       end
